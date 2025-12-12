@@ -6,16 +6,26 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
+        <nav style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+    <h3>Students</h3>
+    <div>
+        <span style="margin-right:12px">Hello, {{ session['user'] }}</span>
+        <a href="{{ url_for('logout') }}" style="background:#dc3545;color:#fff;padding:8px 12px;border-radius:6px;text-decoration:none">Logout</a>
+    </div>
+    </nav>
+
     <div class="container mt-5">
         <h1>Students</h1>
-        <form action="/add" method="POST">
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="number" name="age" placeholder="Age" required>
-            <input type="text" name="grade" placeholder="Grade" required>
+
+        <form action="/add" method="POST" class="form-inline">
+            <input type="text" name="name" class="form-control mr-2" placeholder="Name" required>
+            <input type="number" name="age" class="form-control mr-2" placeholder="Age" required>
+            <input type="text" name="grade" class="form-control mr-2" placeholder="Grade" required>
             <button type="submit" class="btn btn-primary">Add Student</button>
         </form>
-        <table class="table mt-3">
-            <thead>
+
+        <table class="table table-striped mt-4">
+            <thead class="thead-dark">
                 <tr>
                     <th>Name</th>
                     <th>Age</th>
@@ -30,13 +40,15 @@
                     <td>{{ student.age }}</td>
                     <td>{{ student.grade }}</td>
                     <td>
-                        <a href="/edit/{{ student.id }}" class="btn btn-warning">Edit</a>
-                        <a href="/delete/{{ student.id }}" class="btn btn-danger">Delete</a>
+                        <a href="/edit/{{ student.id }}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="/delete/{{ student.id }}" class="btn btn-danger btn-sm">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+
     </div>
+
 </body>
 </html>
