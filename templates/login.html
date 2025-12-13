@@ -1,0 +1,20 @@
+{% extends "base_auth.html" %}
+{% set title = "Login" %}
+{% set subtitle = "Masuk untuk melanjutkan" %}
+
+{% block content %}
+<form method="POST" class="form">
+  <label class="label">Username</label>
+  <input class="input" name="username" placeholder="Masukkan username" autocomplete="username" required>
+
+  <label class="label">Password</label>
+  <input class="input" name="password" type="password" placeholder="Masukkan password" autocomplete="current-password" required>
+
+  <button class="btn" type="submit">Login</button>
+
+  <p class="switch">
+    Belum punya akun?
+    <a href="{{ url_for('register') }}">Daftar</a>
+  </p>
+</form>
+{% endblock %}

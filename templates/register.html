@@ -1,0 +1,23 @@
+{% extends "base_auth.html" %}
+{% set title = "Register" %}
+{% set subtitle = "Buat akun baru dalam beberapa detik" %}
+
+{% block content %}
+<form method="POST" class="form">
+  <label class="label">Username</label>
+  <input class="input" name="username" placeholder="Buat username" autocomplete="username" required>
+
+  <label class="label">Password</label>
+  <input class="input" name="password" type="password" placeholder="Buat password" autocomplete="new-password" required>
+
+  <label class="label">Konfirmasi Password</label>
+  <input class="input" name="confirm" type="password" placeholder="Ulangi password" autocomplete="new-password" required>
+
+  <button class="btn" type="submit">Daftar</button>
+
+  <p class="switch">
+    Sudah punya akun?
+    <a href="{{ url_for('login') }}">Login</a>
+  </p>
+</form>
+{% endblock %}
