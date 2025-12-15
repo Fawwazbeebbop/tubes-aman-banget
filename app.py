@@ -5,6 +5,8 @@ import sqlite3
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash   # === Added ===
 
+import html
+
 app = Flask(__name__)
 app.secret_key = "supersecretkey123"
 
@@ -132,9 +134,9 @@ def index():
 @app.route('/add', methods=['POST'])
 @login_required
 def add_student():
-    name = request.form['name']
-    age = request.form['age']
-    grade = request.form['grade']
+    name = html.escape(request.form['name'])
+    age = html.escape(request.form['age'])
+    grade = html.escape(request.form['grade'])
 
     connection = sqlite3.connect('instance/students.db')
     cursor = connection.cursor()
@@ -165,9 +167,9 @@ def delete_student(id):
 @login_required
 def edit_student(id):
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
-        grade = request.form['grade']
+        name = html.escape(request.form['name'])
+        age = html.escape(request.form['age'])
+        grade = html.escape(request.form['grade'])
 
         db.session.execute(text(f"UPDATE student SET name='{name}', age={age}, grade='{grade}' WHERE id={id}"))
         db.session.commit()
