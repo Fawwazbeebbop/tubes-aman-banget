@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, abort, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 import sqlite3
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
+
+import html
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey123"
@@ -128,10 +130,10 @@ def index():
 # =====================================
 @app.route("/add", methods=["POST"])
 @login_required
-def add_student():
-    name = request.form.get("name", "").strip()
-    age = request.form.get("age", "").strip()
-    grade = request.form.get("grade", "").strip()
+def  add_student():
+    name = html.escape(request.form['name'])
+    age = html.escape(request.form['age'])
+    grade = html.escape(request.form['grade'])
 
     if not name or not age or not grade:
         flash("Semua field (name, age, grade) harus diisi.", "error")
@@ -152,40 +154,88 @@ def add_student():
 # =====================================
 # DELETE STUDENT (DILINDUNGI)
 # =====================================
+# @app.route("/delete/<int:id>")
+# @login_required
+# def delete_student(id):
+#     # ✅ parameterized
+#     db.session.execute(text("DELETE FROM student WHERE id = :id"), {"id": id})
+#     db.session.commit()
+#     flash("Data student berhasil dihapus.", "success")
+#     return redirect(url_for("index"))
+
 @app.route("/delete/<int:id>")
 @login_required
 def delete_student(id):
-    # ✅ parameterized
-    db.session.execute(text("DELETE FROM student WHERE id = :id"), {"id": id})
+    student = db.session.execute(
+        text("SELECT id FROM student WHERE id = :id"),
+        {"id": id}
+    ).fetchone()
+
+    if student is None:
+        abort(404)
+    db.session.execute(
+        text("DELETE FROM student WHERE id = :id"),
+        {"id": id}
+    )
     db.session.commit()
+
     flash("Data student berhasil dihapus.", "success")
     return redirect(url_for("index"))
 
 # =====================================
 # EDIT STUDENT (DILINDUNGI)
 # =====================================
+# @app.route("/edit/<int:id>", methods=["GET", "POST"])
+# @login_required
+# def edit_student(id):
+#     if request.method == 'POST':
+#         name = html.escape(request.form['name'])
+#         age = html.escape(request.form['age'])
+#         grade = html.escape(request.form['grade'])
+
+#         db.session.execute(text(f"UPDATE student SET name='{name}', age={age}, grade='{grade}' WHERE id={id}"))
+#         db.session.commit()
+#         flash("Data student berhasil diupdate.", "success")
+#         return redirect(url_for("index"))
+
+#     student = db.session.execute(text("SELECT * FROM student WHERE id = :id"), {"id": id}).fetchone()
+#     return render_template("edit.html", student=student)
+
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 @login_required
 def edit_student(id):
-    if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        age = request.form.get("age", "").strip()
-        grade = request.form.get("grade", "").strip()
+    student = db.session.execute(
+        text("SELECT * FROM student WHERE id = :id"),
+        {"id": id}
+    ).fetchone()
 
-        if not name or not age or not grade:
-            flash("Semua field harus diisi.", "error")
-            return redirect(url_for("edit_student", id=id))
+    # 🔐 MITIGASI IDOR
+    if student is None:
+        abort(404) 
 
-        # ✅ parameterized
+    if request.method == 'POST':
+        name = html.escape(request.form['name'])
+        age = int(request.form['age'])
+        grade = html.escape(request.form['grade'])
+
         db.session.execute(
-            text("UPDATE student SET name=:name, age=:age, grade=:grade WHERE id=:id"),
-            {"name": name, "age": age, "grade": grade, "id": id},
+            text("""
+                UPDATE student 
+                SET name = :name, age = :age, grade = :grade 
+                WHERE id = :id
+            """),
+            {
+                "name": name,
+                "age": age,
+                "grade": grade,
+                "id": id
+            }
         )
         db.session.commit()
+
         flash("Data student berhasil diupdate.", "success")
         return redirect(url_for("index"))
 
-    student = db.session.execute(text("SELECT * FROM student WHERE id = :id"), {"id": id}).fetchone()
     return render_template("edit.html", student=student)
 
 # =====================================

@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     addStudent($name, $age, $grade); // Fungsi addStudent ada di app.php
 }
 
+
 ?>
 
 <!DOCTYPE html>
