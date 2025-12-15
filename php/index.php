@@ -29,7 +29,7 @@
             <h2>Tambah Siswa Baru</h2>
             <form action="index.php" method="POST">
                 <label for="name">Nama:</label>
-                <input type="text" id="name" name="name" required>
+                <input type="text" id="name" name="name" required >
 
                 <label for="age">Usia:</label>
                 <input type="number" id="age" name="age" required>
@@ -62,7 +62,7 @@
                             foreach ($students as $student) {
                                 echo "<tr>
                                     <td>" . $student['id'] . "</td>
-                                    <td>" . $student['name'] . "</td>
+                                    <td>" . $student[''] . "</td>
                                     <td>" . $student['age'] . "</td>
                                     <td>" . $student['grade'] . "</td>
                                     <td>
