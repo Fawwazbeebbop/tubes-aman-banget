@@ -131,9 +131,9 @@ def index():
 @app.route("/add", methods=["POST"])
 @login_required
 def add_student():
-    name = request.form['name']
-    age = request.form['age']
-    grade = request.form['grade']
+    name = html.escape(request.form['name'])
+    age = html.escape(request.form['age'])
+    grade = html.escape(request.form['grade'])
 
     if not name or not age or not grade:
         flash("Semua field (name, age, grade) harus diisi.", "error")
@@ -170,9 +170,9 @@ def delete_student(id):
 @login_required
 def edit_student(id):
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
-        grade = request.form['grade']
+        name = html.escape(request.form['name'])
+        age = html.escape(request.form['age'])
+        grade = html.escape(request.form['grade'])
 
         db.session.execute(text(f"UPDATE student SET name='{name}', age={age}, grade='{grade}' WHERE id={id}"))
         db.session.commit()
